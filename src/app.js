@@ -35,6 +35,11 @@ io.on('connection', (socket) => {
     console.log(`user id: ${socket.id} / room id: ${data}`);
   });
 
+  socket.on('send_message', (data) => {
+    console.log(`message data:`, data);
+    socket.to(data.room).emit('receive_message', data);
+  });
+
   socket.on('disconnect', () => {
     console.log('user disconnected:', socket.id);
   });
