@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const app = express();
@@ -15,6 +16,11 @@ app.get('/health', (req, res, next) => {
   res.json({
     status: 'OK',
   });
+});
+
+mongoose.connect(process.env.MONGODB_URI);
+mongoose.connection.on('connected', () => {
+  console.log('📖MongoDB connected');
 });
 
 const server = http.createServer(app);
