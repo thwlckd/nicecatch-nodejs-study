@@ -3,24 +3,31 @@ const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const mongoose = require('mongoose');
+const { router } = require('./routes');
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
+const { getToken } = require('./middlewares');
 require('dotenv').config();
+require('./passport')();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-// health check
-app.get('/health', (req, res, next) => {
-  res.json({
-    status: 'OK',
-  });
-});
+app.use(cookieParser()); // client 요청시 쿠키 -> req.cookies로 접근 가능
+app.use(passport.initialize());
+app.use(getToken);
 
 mongoose.connect(process.env.MONGODB_URI);
 mongoose.connection.on('connected', () => {
   console.log('📖MongoDB connected');
+});
+
+app.use('/api', router);
+
+app.use((error, req, res, next) => {
+  res.status(400).json({ error: error.message });
 });
 
 const server = http.createServer(app);
