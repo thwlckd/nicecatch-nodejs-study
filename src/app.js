@@ -26,6 +26,7 @@ mongoose.connection.on('connected', () => {
 
 app.use('/api', router);
 
+// eslint-disable-next-line
 app.use((error, req, res, next) => {
   res.status(400).json({ error: error.message });
 });
