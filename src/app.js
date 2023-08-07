@@ -12,7 +12,12 @@ require('./passport')();
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: `${process.env.HOST}:${process.env.CLIENT_PORT}`,
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser()); // client 요청시 쿠키 -> req.cookies로 접근 가능
